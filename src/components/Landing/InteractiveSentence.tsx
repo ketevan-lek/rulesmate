@@ -85,6 +85,12 @@ export const InteractiveSentence = ({ onSubmit, selectedIntent, setSelectedInten
                 onChange={(e) => setSelectedGame(e.target.value)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    onSubmit(selectedIntent, selectedGame);
+                  }
+                }}
                 placeholder="Enter game name..."
                 style={{ width: `${Math.max(selectedGame.length * 0.6, 8)}em` }}
                 className="bg-transparent outline-none gradient-text font-semibold text-center border-b-2 border-accent-start/60 cursor-text px-2 pb-1 placeholder:text-foreground/50 placeholder:text-base"
