@@ -10,11 +10,7 @@ interface InteractiveSentenceProps {
   setSelectedIntent: (intent: string) => void;
 }
 
-export const InteractiveSentence = ({ 
-  onSubmit, 
-  selectedIntent, 
-  setSelectedIntent 
-}: InteractiveSentenceProps) => {
+export const InteractiveSentence = ({ onSubmit, selectedIntent, setSelectedIntent }: InteractiveSentenceProps) => {
   const [selectedGame, setSelectedGame] = useState(games[0]);
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +20,7 @@ export const InteractiveSentence = ({
   // Auto-rotate game names when not editing
   useEffect(() => {
     if (isEditing) return;
-    
+
     const interval = setInterval(() => {
       setCurrentGameIndex((prev) => (prev + 1) % games.length);
     }, 2000);
@@ -59,7 +55,12 @@ export const InteractiveSentence = ({
       transition={{ duration: 0.6, delay: 0.2 }}
       className="text-center space-y-8"
     >
-      <div className="text-4xl md:text-5xl font-bold text-white flex flex-wrap items-center justify-center gap-2 md:gap-3">
+      <div
+        className="text-3xl sm:text-4xl md:text-5xl font-bold text-white
+                flex flex-wrap md:flex-nowrap
+                items-center justify-center
+                gap-2 md:gap-3 text-center md:text-left"
+      >
         <span>I want</span>
         <button
           onClick={handleIntentClick}
