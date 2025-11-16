@@ -6,10 +6,15 @@ const games = ["Catan", "Terraforming Mars", "Azul", "Carcassonne"];
 
 interface InteractiveSentenceProps {
   onSubmit: (intent: string, game: string) => void;
+  selectedIntent: string;
+  setSelectedIntent: (intent: string) => void;
 }
 
-export const InteractiveSentence = ({ onSubmit }: InteractiveSentenceProps) => {
-  const [selectedIntent, setSelectedIntent] = useState(intents[0]);
+export const InteractiveSentence = ({ 
+  onSubmit, 
+  selectedIntent, 
+  setSelectedIntent 
+}: InteractiveSentenceProps) => {
   const [selectedGame, setSelectedGame] = useState(games[0]);
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
 
