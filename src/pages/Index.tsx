@@ -130,7 +130,7 @@ const Index = () => {
           ease: "easeOut"
         }} className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mb-6 md:mb-8">
             <div className="relative">
-              <input ref={inputRef} type="text" placeholder="Which game?" value={game} onChange={handleInputChange} onKeyDown={handleKeyDown} className={`w-full bg-card border-2 rounded-xl px-4 md:px-6 py-3 md:py-4 text-base md:text-lg text-foreground placeholder:text-muted-foreground text-center focus:outline-none transition-all ${isValidGame ? "border-accent-start/50 bg-accent-start/5" : showError ? "border-red-500/50 bg-red-500/5" : "border-border focus:border-accent-start/50 focus:ring-2 focus:ring-accent-start/50"}`} />
+              <input ref={inputRef} type="text" placeholder="Which game?" value={game} onChange={handleInputChange} onKeyDown={handleKeyDown} className={`w-full bg-card border-2 rounded-xl px-4 md:px-6 py-3 md:py-4 text-base md:text-lg text-foreground placeholder:text-muted-foreground focus:placeholder:text-transparent text-center focus:outline-none transition-all ${isValidGame ? "border-accent-start/50 bg-accent-start/5" : showError ? "border-red-500/50 bg-red-500/5" : "border-border focus:border-accent-start/50 focus:ring-2 focus:ring-accent-start/50"}`} />
               {isValidGame && <motion.div initial={{
               scale: 0
             }} animate={{
