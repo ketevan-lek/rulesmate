@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import MockupComparison from "./pages/MockupComparison";
+import MobileUXMockups from "./pages/MobileUXMockups";
 import FeedbackMockups from "./pages/FeedbackMockups";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/mockups" element={<MockupComparison />} />
+            <Route path="/mobile-ux" element={<MobileUXMockups />} />
             <Route path="/feedback-mockups" element={<FeedbackMockups />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
