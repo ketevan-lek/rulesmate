@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle, BookOpen } from "lucide-react";
 import { ChatThread, Message } from "@/components/Chat/ChatThread";
 import { ChatInput } from "@/components/Chat/ChatInput";
 import { ResourcePanel } from "@/components/Resources/ResourcePanel";
@@ -15,6 +15,7 @@ const Chat = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"chat" | "resources">("chat");
 
   // Initialize with welcome message
   useEffect(() => {
@@ -74,10 +75,45 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
+      {/* Mobile Layout with Bottom Tabs */}
       <div className="flex-1 flex flex-col md:hidden overflow-hidden">
-        <ChatThread messages={messages} isTyping={isTyping} />
-        <ChatInput onSend={handleSendMessage} disabled={isTyping} />
+        {/* Content Area */}
+        <div className="flex-1 overflow-hidden">
+          {mobileTab === "chat" ? (
+            <div className="flex flex-col h-full">
+              <ChatThread messages={messages} isTyping={isTyping} />
+              <ChatInput onSend={handleSendMessage} disabled={isTyping} />
+            </div>
+          ) : (
+            <ResourcePanel game={game || "Board Game"} />
+          )}
+        </div>
+
+        {/* Bottom Tab Bar */}
+        <div className="border-t border-border bg-card flex shrink-0">
+          <button
+            onClick={() => setMobileTab("chat")}
+            className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
+              mobileTab === "chat" 
+                ? "text-primary" 
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-xs font-medium">Chat</span>
+          </button>
+          <button
+            onClick={() => setMobileTab("resources")}
+            className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
+              mobileTab === "resources" 
+                ? "text-primary" 
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <BookOpen className="w-5 h-5" />
+            <span className="text-xs font-medium">Resources</span>
+          </button>
+        </div>
       </div>
 
       {/* Desktop Layout with Resizable Panels */}
