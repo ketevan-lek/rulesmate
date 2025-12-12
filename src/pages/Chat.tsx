@@ -6,6 +6,7 @@ import { ChatThread, Message } from "@/components/Chat/ChatThread";
 import { ChatInput } from "@/components/Chat/ChatInput";
 import { ResourcePanel } from "@/components/Resources/ResourcePanel";
 import { FeedbackBar } from "@/components/FeedbackBar";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 const Chat = () => {
   const location = useLocation();
@@ -83,41 +84,48 @@ For resources: Steel is worth 2 Mâ‚¬ for building cards, Titanium is worth 3 Mâ‚
       exit={{ opacity: 0 }}
       className="flex flex-col h-screen w-full overflow-hidden"
     >
-      <div className="flex flex-1 overflow-hidden">
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
         {/* Chat Column */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <div className="border-b border-border/50 p-4 flex items-center gap-4 bg-bga-surface/50 backdrop-blur">
-            <button
-              onClick={() => navigate("/")}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">{game || "Board Game"}</h1>
-              <p className="text-sm text-muted-foreground capitalize">{intent || "Assistant"}</p>
+        <ResizablePanel defaultSize={60} minSize={30}>
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="border-b border-border/50 p-4 flex items-center gap-4 bg-bga-surface/50 backdrop-blur">
+              <button
+                onClick={() => navigate("/")}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div>
+                <h1 className="text-lg font-semibold text-foreground">{game || "Board Game"}</h1>
+                <p className="text-sm text-muted-foreground capitalize">{intent || "Assistant"}</p>
+              </div>
             </div>
+
+            {/* Chat Thread */}
+            <ChatThread 
+              messages={messages} 
+              isTyping={isTyping} 
+              onSourceClick={handleSourceClick}
+            />
+
+            {/* Chat Input */}
+            <ChatInput onSend={handleSendMessage} disabled={isTyping} />
           </div>
+        </ResizablePanel>
 
-          {/* Chat Thread */}
-          <ChatThread 
-            messages={messages} 
-            isTyping={isTyping} 
-            onSourceClick={handleSourceClick}
-          />
-
-          {/* Chat Input */}
-          <ChatInput onSend={handleSendMessage} disabled={isTyping} />
-        </div>
+        {/* Resizable Handle */}
+        <ResizableHandle withHandle className="bg-border/50 hover:bg-primary/50 transition-colors" />
 
         {/* Resource Panel */}
-        <ResourcePanel 
-          game={game || "Board Game"} 
-          highlightedSection={highlightedSection}
-          onClearHighlight={handleClearHighlight}
-        />
-      </div>
+        <ResizablePanel defaultSize={40} minSize={25} maxSize={60}>
+          <ResourcePanel 
+            game={game || "Board Game"} 
+            highlightedSection={highlightedSection}
+            onClearHighlight={handleClearHighlight}
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
       
       <FeedbackBar />
     </motion.div>
