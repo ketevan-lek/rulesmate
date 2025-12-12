@@ -53,23 +53,18 @@ export const InteractiveSentence = ({ onSubmit, selectedIntent, setSelectedInten
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className="text-center space-y-8"
+      className="text-center space-y-8 px-2"
     >
-      <div
-        className="text-2xl sm:text-3xl md:text-4xl font-bold text-white
-                flex flex-nowrap
-                items-center justify-center
-                gap-2 md:gap-3"
-      >
-        <span>I want</span>
+      <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-1 sm:gap-2 md:gap-3">
+        <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">I want</span>
         <button
           onClick={handleIntentClick}
-          className="gradient-text font-semibold hover:scale-105 transition-transform cursor-pointer px-2 py-1 rounded-lg hover:bg-accent/10"
+          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl gradient-text font-semibold hover:scale-105 transition-transform cursor-pointer px-2 py-1 rounded-lg hover:bg-accent/10"
         >
           {selectedIntent}
         </button>
-        <span>for</span>
-        <div className="relative inline-flex items-baseline justify-center">
+        <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">for</span>
+        <div className="relative inline-flex items-center justify-center mt-2 sm:mt-0">
           <AnimatePresence mode="wait">
             <motion.span
               key={isEditing ? "editing" : currentGame}
@@ -77,7 +72,7 @@ export const InteractiveSentence = ({ onSubmit, selectedIntent, setSelectedInten
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="inline-flex items-baseline"
+              className="inline-flex items-center"
             >
               <input
                 type="text"
@@ -92,8 +87,7 @@ export const InteractiveSentence = ({ onSubmit, selectedIntent, setSelectedInten
                   }
                 }}
                 placeholder="Enter game name..."
-                style={{ width: `${Math.max(selectedGame.length * 0.6, 8)}em` }}
-                className="bg-transparent outline-none gradient-text font-semibold text-center border-b-2 border-accent-start/60 cursor-text px-2 pb-1 placeholder:text-foreground/50 placeholder:text-base"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl bg-transparent outline-none gradient-text font-semibold text-center border-b-2 border-accent-start/60 cursor-text px-2 pb-1 placeholder:text-foreground/50 placeholder:text-lg w-40 sm:w-48 md:w-56 lg:w-64"
               />
               <motion.span
                 animate={{ opacity: [1, 0, 1] }}
