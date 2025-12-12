@@ -16,10 +16,9 @@ export const GreetingText = () => {
           duration: 0.6,
           ease: "easeOut"
         }} 
-        className="text-foreground/90 text-center whitespace-nowrap"
+        className="text-2xl text-foreground/90 text-center font-medium md:text-3xl"
       >
-        <span className="text-2xl md:text-3xl font-bold">Rules Mate</span>
-        <span className="text-lg md:text-xl italic font-normal ml-2">Your AI-Powered Board Game Assistant</span>
+        Your AI-Powered Board Game Assistant
       </motion.h1>
       <motion.p
         initial={{
