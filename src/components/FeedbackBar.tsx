@@ -1,17 +1,45 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, X, Send } from "lucide-react";
+import { ChevronUp, X, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { submitFeedback } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+
 export const FeedbackBar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState("");
-  const handleSubmit = () => {
-    if (!message.trim()) return;
-    // TODO: Handle feedback submission
-    console.log("Feedback submitted:", message);
-    setMessage("");
-    setIsExpanded(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async () => {
+    if (!message.trim() || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      await submitFeedback({
+        message: message.trim(),
+        page: window.location.pathname,
+        timestamp: new Date().toISOString(),
+      });
+      
+      toast({
+        title: "Feedback sent",
+        description: "Thank you for your feedback!",
+      });
+      
+      setMessage("");
+      setIsExpanded(false);
+    } catch (error) {
+      console.error("Failed to submit feedback:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send feedback. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <div className="border-t border-border bg-background shrink-0">
@@ -46,13 +74,15 @@ export const FeedbackBar = () => {
                   }
                 }}
                 placeholder="Describe the issue..."
-                className="min-w-0 flex-1 h-10 px-3 text-base bg-input border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring"
+                disabled={isSubmitting}
+                className="min-w-0 flex-1 h-10 px-3 text-base bg-input border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
               />
               <button
                 onClick={handleSubmit}
-                className="flex-none h-10 w-10 flex items-center justify-center rounded-md bg-[hsl(var(--feedback))] hover:brightness-110 text-background transition-all"
+                disabled={isSubmitting}
+                className="flex-none h-10 w-10 flex items-center justify-center rounded-md bg-[hsl(var(--feedback))] hover:brightness-110 text-background transition-all disabled:opacity-50"
               >
-                <Send className="w-4 h-4" />
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
           </motion.div>

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, MessageCircleQuestion, Play, Settings, Check, X } from "lucide-react";
 import { FeedbackBar } from "@/components/FeedbackBar";
+import { searchGames, Game } from "@/lib/api";
+
 const shortcuts = [{
   label: "Rules",
   icon: BookOpen,
@@ -25,34 +27,57 @@ const shortcuts = [{
   intent: "setup"
 }];
 
-// Mock available games - will be replaced with actual database
-const availableGames = ["Catan", "Catan: Seafarers", "Catan: Cities & Knights", "Ticket to Ride", "Ticket to Ride: Europe", "Monopoly", "Monopoly Deal", "Scrabble", "Chess", "Pandemic", "Pandemic Legacy", "Azul", "Azul: Summer Pavilion", "Wingspan", "Codenames", "7 Wonders"];
 const Index = () => {
   const navigate = useNavigate();
   const [game, setGame] = useState("");
   const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
-  const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState<Game[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const filterGames = (query: string) => {
-    if (!query.trim()) return [];
-    return availableGames.filter(g => g.toLowerCase().includes(query.toLowerCase()));
-  };
-  const hasNoMatch = (query: string) => {
-    if (!query.trim()) return false;
-    return !availableGames.some(g => g.toLowerCase().includes(query.toLowerCase()));
-  };
 
-  // Option 3: Show after space or 3+ chars
+  // Debounced search
+  useEffect(() => {
+    if (!game.trim() || selectedGame) {
+      setSearchResults([]);
+      return;
+    }
+
+    const hasSpace = game.includes(" ");
+    if (!hasSpace && game.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const results = await searchGames(game);
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Failed to search games:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 150);
+
+    return () => clearTimeout(timeoutId);
+  }, [game, selectedGame]);
+
+  const hasNoMatch = !isSearching && game.trim().length >= 3 && searchResults.length === 0 && !selectedGame;
+
+  // Show results when we have search results
   useEffect(() => {
     const hasSpace = game.includes(" ");
-    if ((hasSpace || game.length >= 3) && !selectedGame) {
+    if ((hasSpace || game.length >= 3) && !selectedGame && searchResults.length > 0) {
       setShowResults(true);
-    } else {
+    } else if (searchResults.length === 0) {
       setShowResults(false);
     }
-  }, [game, selectedGame]);
+  }, [game, selectedGame, searchResults]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -69,7 +94,8 @@ const Index = () => {
       navigate("/chat", {
         state: {
           intent: selectedIntent || "general",
-          game: selectedGame
+          game: selectedGame.name,
+          gameId: selectedGame.id
         }
       });
     }
@@ -82,17 +108,18 @@ const Index = () => {
       handleSubmit();
     }
   };
-  const handleGameSelect = (gameName: string) => {
-    setSelectedGame(gameName);
-    setGame(gameName);
+  const handleGameSelect = (gameItem: Game) => {
+    setSelectedGame(gameItem);
+    setGame(gameItem.name);
     setShowResults(false);
+    setSearchResults([]);
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGame(e.target.value);
     setSelectedGame(null);
   };
   const isValidGame = selectedGame !== null;
-  const showError = hasNoMatch(game) && showResults;
+  const showError = hasNoMatch && showResults === false && game.trim().length >= 3;
   return <main className="h-[100dvh] flex flex-col overflow-hidden">
       <motion.div initial={{
       opacity: 0
@@ -149,7 +176,7 @@ const Index = () => {
             
             {/* Dropdown Results */}
             <AnimatePresence>
-              {showResults && !selectedGame && filterGames(game).length > 0 && <motion.div ref={dropdownRef} initial={{
+              {showResults && !selectedGame && searchResults.length > 0 && <motion.div ref={dropdownRef} initial={{
               opacity: 0,
               y: -10
             }} animate={{
@@ -160,8 +187,8 @@ const Index = () => {
               y: -10
             }} className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50">
                   <div className="max-h-48 overflow-y-auto">
-                    {filterGames(game).map(gameName => <button key={gameName} onClick={() => handleGameSelect(gameName)} className="w-full px-4 py-3 text-left text-foreground hover:bg-accent-start/10 transition-colors">
-                        {gameName}
+                    {searchResults.map(gameItem => <button key={gameItem.id} onClick={() => handleGameSelect(gameItem)} className="w-full px-4 py-3 text-left text-foreground hover:bg-accent-start/10 transition-colors">
+                        {gameItem.name}
                       </button>)}
                   </div>
                 </motion.div>}

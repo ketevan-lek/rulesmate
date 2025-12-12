@@ -7,11 +7,12 @@ import { ChatInput } from "@/components/Chat/ChatInput";
 import { ResourcePanel } from "@/components/Resources/ResourcePanel";
 import { FeedbackBar } from "@/components/FeedbackBar";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { sendChatMessage, ChatMessage } from "@/lib/api";
 
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { intent, game } = (location.state as { intent?: string; game?: string }) || {};
+  const { intent, game, gameId } = (location.state as { intent?: string; game?: string; gameId?: string }) || {};
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -30,7 +31,7 @@ const Chat = () => {
     }
   }, [intent, game]);
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -41,17 +42,39 @@ const Chat = () => {
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Convert messages to API format
+      const chatHistory: ChatMessage[] = messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
+      chatHistory.push({ role: "user", content });
+
+      const response = await sendChatMessage({
+        game: game || "Board Game",
+        intent: intent || "general",
+        messages: chatHistory,
+      });
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: `This is a simulated response. In production, this would connect to your LLM backend trained on ${game} rulebook. Your question was: "${content}"`,
+        content: response.message,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
