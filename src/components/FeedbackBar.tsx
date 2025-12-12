@@ -54,7 +54,7 @@ export const FeedbackBar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             onClick={() => setIsExpanded(true)}
-            className="w-full py-2 px-4 flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            className="w-full py-2.5 px-4 flex items-center justify-center gap-2 text-xs font-medium text-background bg-[hsl(var(--feedback))] hover:brightness-110 transition-all"
           >
             <ChevronUp className="w-3 h-3" />
             <span>Found a bug? Have a suggestion? Let us know!</span>
