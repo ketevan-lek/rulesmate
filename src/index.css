@@ -15,6 +15,7 @@ All colors MUST be HSL.
     
     --accent-start: 45 100% 60%;   /* Golden Yellow */
     --accent-end: 30 100% 50%;     /* Amber */
+    --feedback: 25 95% 53%;        /* Orange for feedback bar */
     
     --text-primary: 0 0% 100%;     /* White */
     --text-secondary: 0 0% 70%;    /* Light gray */
